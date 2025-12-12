@@ -17,9 +17,8 @@ if "carrinho" not in st.session_state:
     st.session_state.carrinho = []
 
 # -------------------------------
-# Função para carregar produtos
+# Carregar produtos (sempre atualizado)
 # -------------------------------
-@st.cache_data(ttl=5)  # Atualiza a cada 5 segundos
 def carregar_produtos():
     try:
         return pd.read_csv(PRODUTOS_CSV)

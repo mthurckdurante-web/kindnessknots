@@ -1,15 +1,11 @@
 import streamlit as st
 import pandas as pd
-import firebase_admin
-from firebase_admin import credentials, db
+import requests
 
 # -------------------------------
 # Configuração Firebase
 # -------------------------------
-cred = credentials.Certificate("firebase_credentials.json")
-firebase_admin.initialize_app(cred, {
-    "databaseURL": "https://kindnessknots-c6b86-default-rtdb.firebaseio.com/"
-})
+FIREBASE_URL = "https://kindnessknots-c6b86-default-rtdb.firebaseio.com/produtos.json"
 
 st.set_page_config(page_title="Kindness Knots", layout="wide")
 
@@ -20,12 +16,11 @@ if "carrinho" not in st.session_state:
     st.session_state.carrinho = []
 
 # -------------------------------
-# Carregar produtos do Firebase
+# Ler produtos do Firebase
 # -------------------------------
-ref = db.reference("produtos")
-produtos_data = ref.get()  # retorna dicionário
-
-if produtos_data:
+response = requests.get(FIREBASE_URL)
+if response.status_code == 200 and response.json():
+    produtos_data = response.json()
     produtos_df = pd.DataFrame.from_dict(produtos_data, orient="index")
 else:
     produtos_df = pd.DataFrame(columns=["nome","categoria","preco","imagem"])
